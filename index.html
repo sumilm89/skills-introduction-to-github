@@ -1,0 +1,141 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(AnimationApp());
+}
+
+class AnimationApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Animation Creator',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Animation Creator')),
+      body: Center(
+        child: ElevatedButton(
+          child: Text('Create New Project'),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AnimationEditor()));
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class AnimationEditor extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Animation Editor')),
+      body: Center(child: Text('Animation Editing Features Go Here')),
+    );
+  }
+}import 'package:rive/rive.dart';
+
+class CharacterCustomization extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Character Customization')),
+      body: Center(
+        child: RiveAnimation.asset(
+          'assets/character.riv',
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+}// firebase.json
+{
+  "hosting": {
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}import 'package:firebase_storage/firebase_storage.dart';
+
+Future<void> uploadAsset(String filePath, String fileName) async {
+  File file = File(filePath);
+  try {
+    await FirebaseStorage.instance.ref('projects/$fileName').putFile(file);
+    print('Upload successful');
+  } catch (e) {
+    print('Error: $e');
+  }
+}import 'package:flare_flutter/flare_actor.dart';
+
+class KeyframeAnimation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: FlareActor(
+          "assets/character_animation.flr",
+          animation: "walk",
+        ),
+      ),
+    );
+  }
+}import 'package:audioplayers/audioplayers.dart';
+
+class SoundPlayer extends StatelessWidget {
+  final AudioPlayer player = AudioPlayer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          child: Text('Play Sound'),
+          onPressed: () {
+            player.play('assets/sound_effect.mp3');
+          },
+        ),
+      ),
+    );
+  }
+}import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+
+void exportAnimation(String inputPath, String outputPath) {
+  final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
+  _flutterFFmpeg.execute(
+    "-i $inputPath -c:v libx264 $outputPath",
+  ).then((returnCode) {
+    print('Export completed with return code $returnCode');
+  });
+}import 'package:tflite/tflite.dart';
+
+Future<void> loadModel() async {
+  String res = await Tflite.loadModel(
+    model: "assets/model.tflite",
+    labels: "assets/labels.txt",
+  );
+  print(res);
+}
+
+Future<void> runModelOnImage(String imagePath) async {
+  var output = await Tflite.runModelOnImage(
+    path: imagePath,
+    imageMean: 127.5,
+    imageStd: 127.5,
+    numResults: 2,
+    threshold: 0.5,
+  );
+  print(output);
+}
