@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Website</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #character {
+            width: 100px;
+            height: 100px;
+            background-color: orange;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes move {
+            0% { left: 0; }
+            50% { left: 50%; }
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div id="character"></div>
+    <script>
+        const character = document.getElementById('character');
+        let move = false;
+
+        // Character movement
+        character.addEventListener('click', () => {
+            move = !move;
+            if (move) {
+                character.style.animation = "move 2s infinite alternate";
+            } else {
+                character.style.animation = "none";
+            }
+        });
+    </script>
+</body>
+</html>
